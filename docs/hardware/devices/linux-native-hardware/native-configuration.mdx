@@ -1,0 +1,100 @@
+---
+id: native-configuration
+title: Configuring Linux-Native Devices
+sidebar_label: Configuration
+sidebar_position: 5
+description: Configuring Portuino Environment a Linux Native Device 
+---
+
+This page outlines the configuration of Meshtastic on Linux-native devices.
+
+## Configuration
+
+### Hardware Interfaces
+
+For devices requiring SPI or I2C:
+
+- SPI support can be enabled in `/boot/config.txt` or `/boot/firmware/config.txt`:
+
+```plaintext
+dtparam=spi=on
+dtoverlay=spi0-0cs
+```
+
+- I2C support is enabled with:
+
+```plaintext
+dtparam=i2c_arm=on
+```
+
+### Meshtasticd Configuration
+
+- The meshtasticd configuration is at `/etc/meshtasticd/config.yaml` by default. If a `config.yaml` is found in the current directory, that takes precedence. And a config file specified with the `-c/--config` option has the highest precedence.
+
+To enable a LoRa radio connected to your device, uncomment the appropriate lines in the config file, including the Module line. As an example, the Waveshare SX126X module would have a Lora section that looks like this:
+
+```yaml
+Lora:
+  Module: sx1262 # Waveshare SX126X XXXM
+  DIO2_AS_RF_SWITCH: true
+  CS: 21
+  IRQ: 16
+  Busy: 20
+  Reset: 18
+```
+:::info
+The config.yaml file is sensitive to spacing, so ensure that the indentation and spacing are correct.
+:::
+
+### Web Server
+
+- Meshtasticd has web server support starting with release 2.3.0 To enable this:
+
+```plaintext
+Webserver:
+  Port: 443 # Port for Webserver & Webservices
+  RootPath: /usr/share/doc/meshtasticd/web # Root Dir of WebServer
+```
+
+### GPS Support
+
+Enabling UART for GPS hats requires modifications in `/boot/firmware/config.txt`:
+
+```plaintext
+# Needed for all Pi device.
+enable_uart=1
+
+# Needed for the Pi 5 only.
+dtoverlay=uart0
+```
+
+- The correct port for UART GPS on the Pi 5 after a reboot is `/dev/ttyAMA0`.
+- The correct port for UART GPS on earlier Pi versions after a reboot is `/dev/ttyS0`.
+
+### Persistence
+
+- The persistent .proto db files of the portduino version of meshtasticd are stored under: `/root/.portduino/default/prefs/`.
+
+### Advanced Setup and Troubleshooting
+
+- Installation of drivers for CH341 is required for Ubuntu 22.04 and other systems for SPI/I2C/GPIO support.
+
+```shell
+git clone https://github.com/frank-zago/ch341-i2c-spi-gpio.git
+cd ch341-i2c-spi-gpio
+make
+sudo insmod ch341-core.ko
+sudo insmod gpio-ch341.ko
+sudo insmod i2c-ch341.ko
+sudo insmod spi-ch341.ko
+```
+
+- Devices with kernels older than 5.16 may need to blacklist ch341, while kernels 6.0 and newer are observed to work more reliably.
+
+## CLI Configuration
+
+Interaction with Meshtastic can be conducted via the command line:
+
+```shell
+meshtastic --host localhost ...
+```

@@ -1,0 +1,59 @@
+---
+id: linux-native-packages
+title: Installing OS Packages for Linux-Native Devices
+sidebar_label: Linux
+sidebar_position: 1
+description: Set up Meshtastic on Linux-native devices using the meshtasticd binary or OS packages.
+---
+
+This page outlines the setup of Meshtastic on Linux-native devices direcly on the operating system either installing the released packages or building from source yourself.
+
+## Install from Packages
+
+
+- Necessary system libraries should be installed before building or installing Meshtastic.
+
+```shell
+sudo apt install libgpiod libyaml-cpp0.7 libbluetooth
+```
+
+- And optionally for web server support
+```shell
+sudo apt install openssl libssl libulfius liborcania
+```
+
+- The .deb Package is available as part of the release, installing the binary, a systemd service, and a config file. It is compiled for Debian Bookworm and incompatible with Bullseye.
+
+```shell
+sudo apt install ./meshtasticd_{version}arm64.deb
+```
+
+## Build from Source
+
+### Install the -dev packages for dependencies:
+
+```shell
+sudo apt install libgpiod-dev libyaml-cpp-dev libbluetooth-dev
+```
+
+- And optionally for web server support
+
+```shell
+sudo apt install openssl libssl-dev libulfius-dev liborcania-dev
+```
+
+
+First, some environment variables need to be set up with command:
+
+`. ~/.platformio/penv/bin/activate`
+
+You can build amd64 image with command
+
+`./bin/build-native.sh`
+
+### Executing the application interactively
+
+The built binary file should be found under name
+`release/latest/bins/universal/meshtastic_linux_amd64`.
+If this is not the case, you can also use the direct program name:
+`.pio/build/native/program`

@@ -1,0 +1,46 @@
+---
+id: docker-installation
+title: Linux-Native on Docker
+sidebar_label: Docker
+sidebar_position: 2
+description: Setting up Meshtastic on Docker
+---
+
+If you do not own a Linux machine, or you just want to separate things, you might want
+to run the application inside a docker container.
+
+## Installing from Dockerhub
+
+
+## Building a Docker container
+
+To build docker image, type
+
+`docker build -t meshtastic/device .`
+
+
+To run a container, type
+
+`docker run --rm -p 4403:4403 meshtastic/device`
+
+or, to get an interactive shell on the docker created container:
+
+`docker run -it -p 4403:4403 meshtastic/device bash`
+
+You might want to mount your local development folder:
+
+
+`docker run -it --mount type=bind,source=/PathToMyProjects/Meshtastic/Meshtastic-device-mybranch,target=/Meshtastic-device-mybranch -p 4403:4403 meshtastic/device bash`
+
+### Stop the container
+
+Run this to get the ID:
+
+`docker ps`
+
+Stop the container with command:
+
+`docker kill <id>`
+
+> Tip: you can just use the first few characters of the ID in docker commands
+
